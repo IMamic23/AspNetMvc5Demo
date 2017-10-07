@@ -10,5 +10,6 @@ namespace Vidly
         {
             ConfigureAuth(app);
         }
+
     }
 }
