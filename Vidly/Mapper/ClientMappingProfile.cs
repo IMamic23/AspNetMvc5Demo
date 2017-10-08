@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Vidly.Models;
+using Vidly.ViewModels;
 
 namespace Vidly.Mapper
 {
@@ -7,7 +8,9 @@ namespace Vidly.Mapper
     {
         public ClientMappingProfile()
         {
-            CreateMap<MovieDto, Movie>().ReverseMap();
+            CreateMap<Movie, MovieDto>().ReverseMap();
+            CreateMap<Movie, MovieFormViewModel>().ReverseMap();
+            CreateMap<Customer, CustomerDto>().ReverseMap();
         }
     }
 }

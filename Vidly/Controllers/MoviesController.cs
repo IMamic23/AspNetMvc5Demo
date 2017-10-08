@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using AutoMapper;
-using Vidly.Mapper;
 using Vidly.Models;
 using Vidly.ViewModels;
 
@@ -14,14 +11,10 @@ namespace Vidly.Controllers
     public class MoviesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _iMapper;
 
         public MoviesController()
         {
             _context = new ApplicationDbContext();
-
-            var config = new AutoMapperConfiguration().Configure();
-            _iMapper = config.CreateMapper();
         }
         protected override void Dispose(bool disposing)
         {
@@ -45,7 +38,7 @@ namespace Vidly.Controllers
             return View(movie);
         }
 
-        public async Task<ActionResult> NewMovie()
+        public async Task<ActionResult> New()
         {
             var genresList = await _context.Genres.ToListAsync();
             var viewModel = new MovieFormViewModel
@@ -56,9 +49,20 @@ namespace Vidly.Controllers
             return View("MovieForm", viewModel);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(Movie movie)
         {
-            Movie movieInDb = new Movie();
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieFormViewModel()
+                {
+                    Genres = await _context.Genres.ToListAsync()
+                };
+
+                AutoMapper.Mapper.Map(movie, viewModel);
+
+                return View("MovieForm", viewModel);
+            }
 
             if (movie.Id == 0)
             {
@@ -66,9 +70,10 @@ namespace Vidly.Controllers
             }
             else
             {
-                movieInDb = await _context.Movies.SingleOrDefaultAsync(m => m.Id == movie.Id);
+                var movieInDb = await _context.Movies.SingleOrDefaultAsync(m => m.Id == movie.Id);
                 movie.DateAdded = movieInDb.DateAdded;
             }
+            movie.LastUpdateDate = DateTime.Now;
 
             _context.Movies.AddOrUpdate(movie);
             await _context.SaveChangesAsync();
@@ -85,9 +90,11 @@ namespace Vidly.Controllers
 
             var viewModel = new MovieFormViewModel()
             {
-                Movie = movie,
                 Genres = await _context.Genres.ToListAsync()
             };
+
+            AutoMapper.Mapper.Map(movie, viewModel);
+
             return View("MovieForm", viewModel);
         }
     }

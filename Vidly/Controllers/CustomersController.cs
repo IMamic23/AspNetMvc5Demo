@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -40,11 +41,12 @@ namespace Vidly.Controllers
             return View(customer);
         }
 
-        public async Task<ActionResult> NewCustomer()
+        public async Task<ActionResult> New()
         {
             var membershipTypes = await _context.MembershipTypes.ToListAsync();
             var viewModel = new CustomerFormViewModel
             {
+                Customer = new Customer(),
                 MembershipTypes = membershipTypes
             };
 
@@ -52,8 +54,30 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(Customer customer)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CustomerFormViewModel
+                {
+                    Customer = customer,
+                    MembershipTypes = await _context.MembershipTypes.ToListAsync()
+                };
+
+                return View("CustomerForm", viewModel);
+            }
+
+            if (customer.Id == 0)
+                customer.DateCreated = DateTime.Now;
+            else
+            {
+                var customerFromDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == customer.Id);
+                customer.DateCreated = customerFromDb.DateCreated;
+            }
+
+            customer.LastUpdateDate = DateTime.Now;
+
             _context.Customers.AddOrUpdate(customer);
             await _context.SaveChangesAsync();
 

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace Vidly.Models
 {
@@ -11,15 +8,25 @@ namespace Vidly.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Please enter movie's name.")]
         public string Name { get; set; }
+
         [Required]
         [Display(Name = "Release Date")]
         public DateTime ReleaseDate { get; set; }
+
         [Required]
         public DateTime DateAdded { get; set; }
+
+        [Required]
+        public DateTime LastUpdateDate { get; set; }
+
         [Required]
         [Display(Name = "Number in Stock")]
-        public byte InStock { get; set; }
+        [Range(1,20, ErrorMessage = "Number in stock should be between 1 and 20")]
+        public byte InStock { get; set; } = 0;
+
 
         [ForeignKey("GenreId")]
         public virtual Genre Genre { get; set; }

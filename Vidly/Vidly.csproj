@@ -60,6 +60,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -67,6 +70,12 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Mvc.Html5, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MVCHtml5Toolkit.1.8\lib\System.Web.Mvc.Html5.dll</HintPath>
     </Reference>
@@ -197,7 +206,9 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\CustomersController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -259,13 +270,27 @@
     <Compile Include="Migrations\201710052155339_PopulateMovies2.Designer.cs">
       <DependentUpon>201710052155339_PopulateMovies2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710072226468_CustomerEmail.cs" />
+    <Compile Include="Migrations\201710072226468_CustomerEmail.Designer.cs">
+      <DependentUpon>201710072226468_CustomerEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710081736138_UpdatedModels.cs" />
+    <Compile Include="Migrations\201710081736138_UpdatedModels.Designer.cs">
+      <DependentUpon>201710081736138_UpdatedModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710081947351_CustomerCreatedDate.cs" />
+    <Compile Include="Migrations\201710081947351_CustomerCreatedDate.Designer.cs">
+      <DependentUpon>201710081947351_CustomerCreatedDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\CustomerDto.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MembershipType.cs" />
+    <Compile Include="Models\Min18YearsIfAMember.cs" />
     <Compile Include="Models\Movie.cs" />
     <Compile Include="Models\MovieDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -286,9 +311,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="ApplicationInsights.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -424,6 +446,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710052155339_PopulateMovies2.resx">
       <DependentUpon>201710052155339_PopulateMovies2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710072226468_CustomerEmail.resx">
+      <DependentUpon>201710072226468_CustomerEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710081736138_UpdatedModels.resx">
+      <DependentUpon>201710081736138_UpdatedModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710081947351_CustomerCreatedDate.resx">
+      <DependentUpon>201710081947351_CustomerCreatedDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
