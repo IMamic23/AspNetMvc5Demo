@@ -45,6 +45,7 @@ namespace Vidly.Controllers.Api
 
             var customer = AutoMapper.Mapper.Map<Customer>(customerDto);
             customer.LastUpdateDate = DateTime.Now;
+            customer.DateCreated = DateTime.Now;
 
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
@@ -56,32 +57,37 @@ namespace Vidly.Controllers.Api
 
         // PUT /api/customers/1
         [HttpPut]
-        public async Task UpdateCustomer(int id, CustomerDto customerDto)
+        public async Task<IHttpActionResult> UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return BadRequest();
 
             var customerInDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
 
-            if(customerInDb == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+            if (customerInDb == null)
+                return NotFound();
 
             AutoMapper.Mapper.Map(customerDto, customerInDb);
+            customerInDb.LastUpdateDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
+
+            return Ok(customerDto);
         }
 
         // DELETE /api/customers/1
         [HttpDelete]
-        public async Task DeleteCustomer(int id)
+        public async Task<IHttpActionResult> DeleteCustomer(int id)
         {
             var customerInDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
 
             if (customerInDb == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
             _context.Customers.Remove(customerInDb);
             await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
