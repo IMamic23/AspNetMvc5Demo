@@ -24,11 +24,9 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
-        public async Task<ViewResult> Index()
+        public ViewResult Index()
         {
-            var customers = await _context.Customers.Include(c => c.MembershipType).ToListAsync();
-
-            return View(customers);
+            return View();
         }
 
         public async Task<ActionResult> Details(int id)

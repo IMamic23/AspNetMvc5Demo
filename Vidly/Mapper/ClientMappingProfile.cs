@@ -9,6 +9,7 @@ namespace Vidly.Mapper
         public ClientMappingProfile()
         {
             CreateMap<Movie, MovieDto>().ReverseMap();
+            CreateMap<MembershipType, MembershipTypeDto>().ReverseMap();
             CreateMap<Movie, MovieFormViewModel>().ReverseMap();
             CreateMap<Customer, CustomerDto>().ReverseMap();
         }

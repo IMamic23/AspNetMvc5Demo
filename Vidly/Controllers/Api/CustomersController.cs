@@ -22,7 +22,10 @@ namespace Vidly.Controllers.Api
         [HttpGet]
         public IEnumerable<CustomerDto> GetCustomers()
         {
-            return _context.Customers.ToList().Select(AutoMapper.Mapper.Map<Customer, CustomerDto>);
+            return _context.Customers
+                .Include(c => c.MembershipType)
+                .ToList()
+                .Select(AutoMapper.Mapper.Map<Customer, CustomerDto>);
         }
 
         [HttpGet]
