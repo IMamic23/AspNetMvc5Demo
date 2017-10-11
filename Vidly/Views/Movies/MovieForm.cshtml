@@ -14,7 +14,7 @@
         @Html.ValidationMessageFor(m => m.Name)
     </div>
     <div class="form-group">
-        @Html.TextBoxFor(m => m.ReleaseDate, "{0:MM.dd.yyyy}", new { @class = "form-control", placeholder = @Html.DisplayNameFor(m => m.ReleaseDate) })
+        @Html.TextBoxFor(m => m.ReleaseDate, "{0:MM/dd/yyyy}", new { @class = "form-control", id="datecontrol", placeholder = @Html.DisplayNameFor(m => m.ReleaseDate) })
         @Html.ValidationMessageFor(m => m.ReleaseDate)
     </div>
     <div class="form-group">
@@ -33,4 +33,8 @@
 @section scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $('#datecontrol').datepicker();
+    </script>
 }

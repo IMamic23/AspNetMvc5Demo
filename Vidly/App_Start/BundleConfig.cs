@@ -32,7 +32,9 @@ namespace Vidly
                       "~/Content/bootstrap-lumen.css",
                       "~/Content/site.css",
                       "~/content/datatables/css/datatables.bootstrap.css",
-                      "~/Content/bootstrap-datepicker.css"));
+                      "~/Content/bootstrap-datepicker.css",
+                      "~/Content/font-awesome.css"
+                      ));
         }
     }
 }

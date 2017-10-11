@@ -20,11 +20,9 @@ namespace Vidly.Controllers
         {
             _context.Dispose();
         }
-        public async Task<ViewResult>Index()
+        public ViewResult Index()
         {
-            var movies = await _context.Movies.Include(m => m.Genre).ToListAsync();
-
-            return View(movies);
+            return View();
         }
 
         // GET: Movies/Details
