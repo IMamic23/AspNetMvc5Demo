@@ -29,7 +29,7 @@ namespace Vidly.Models
 
 
         [ForeignKey("GenreId")]
-        public virtual Genre Genre { get; set; }
+        public Genre Genre { get; set; }
         [Required]
         public byte GenreId { get; set; }
     }

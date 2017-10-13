@@ -22,10 +22,11 @@ namespace Vidly.Controllers
         }
         public ViewResult Index()
         {
-            return View();
+            return View(User.IsInRole(RoleName.CanManageMovies) ? "Index" : "ReadOnlyList");
         }
 
         // GET: Movies/Details
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> Details(int id)
         {
             var movie = await _context.Movies.Include(c => c.Genre).SingleOrDefaultAsync(c => c.Id == id);
@@ -36,6 +37,7 @@ namespace Vidly.Controllers
             return View(movie);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> New()
         {
             var genresList = await _context.Genres.ToListAsync();
@@ -46,7 +48,9 @@ namespace Vidly.Controllers
 
             return View("MovieForm", viewModel);
         }
+
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(Movie movie)
         {
@@ -79,6 +83,7 @@ namespace Vidly.Controllers
             return RedirectToAction("Index", "Movies");
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> Edit(int id)
         {
             var movie = await _context.Movies.SingleOrDefaultAsync(c => c.Id == id);
