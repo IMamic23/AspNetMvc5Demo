@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Vidly.Models;
+using Vidly.Models.ModelDto;
 
 namespace Vidly.Controllers.Api
 {

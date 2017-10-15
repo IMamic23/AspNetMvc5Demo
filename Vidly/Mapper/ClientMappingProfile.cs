@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Vidly.Models;
+using Vidly.Models.ModelDto;
 using Vidly.ViewModels;
 
 namespace Vidly.Mapper

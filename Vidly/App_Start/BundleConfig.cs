@@ -17,7 +17,8 @@ namespace Vidly
                         "~/Scripts/bootstrap-datepicker.js",
                         "~/Scripts/DatePickerReady.js",
                         "~/scripts/datatables/jquery.datatables.js",
-                        "~/scripts/datatables/datatables.bootstrap.js"
+                        "~/scripts/datatables/datatables.bootstrap.js",
+                        "~/scripts/typeahead.bundle.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -30,6 +31,7 @@ namespace Vidly
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap-lumen.css",
+                      "~/Content/typeahead.css",
                       "~/Content/site.css",
                       "~/content/datatables/css/datatables.bootstrap.css",
                       "~/Content/bootstrap-datepicker.css",

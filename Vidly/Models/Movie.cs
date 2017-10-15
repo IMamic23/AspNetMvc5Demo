@@ -27,6 +27,7 @@ namespace Vidly.Models
         [Range(1,20, ErrorMessage = "Number in stock should be between 1 and 20")]
         public byte InStock { get; set; } = 0;
 
+        public byte NumberAvailable { get; set; }
 
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; }

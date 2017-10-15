@@ -1,13 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Vidly.Models
+namespace Vidly.Models.ViewModels
 {
-    public class ExternalLoginListViewModel
-    {
-        public string ReturnUrl { get; set; }
-    }
-
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
