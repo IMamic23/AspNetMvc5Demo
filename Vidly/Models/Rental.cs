@@ -16,7 +16,6 @@ namespace Vidly.Models
         [Display(Name = "Date Rented")]
         public DateTime DateRented { get; set; }
 
-        [Required]
         [Display(Name = "Date Returned")]
         public DateTime? DateReturned { get; set; }
 

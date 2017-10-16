@@ -7,13 +7,26 @@
 <h2>New Rental</h2>
 
 
-<form>
+<form id="newRental">
     <div class="form-group">
-        <input id="customer" type="text" value="" class="form-control typeahead" placeholder="Enter Customer..."/>
+        <div class="tt-container">
+            <input id="ajaxGetCustomers" list="cust-json-datalist" autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Customer Name..." />
+            <datalist id="cust-json-datalist"></datalist>
+        </div>
     </div>
     <div class="form-group">
-        <input type="text" value="" class="form-control" placeholder="Enter Movie Name..." />
+        <div class="tt-container">
+            <input id="ajaxGetMovies" list="movie-json-datalist" autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Movie Name..." />
+            <datalist id="movie-json-datalist"></datalist>
+        </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <ul id="movies" class="list-group"></ul>
+        </div>
+    </div>
+
     <button class="btn btn-primary">
         Submit
     </button>
@@ -23,7 +36,7 @@
 {
     <script>
         $(document).ready(function () {
-            var vm = {};
+
 
             var customers = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -34,15 +47,179 @@
                 }
             });
 
-            $('.typeahead').typeahead({
+            $('#customer').typeahead({
                 minLength: 2,
                 highlight: true
             }, {
-                name: 'customers',
-                display: 'name',
-                source: customers
-                }).on("typeahead:select", function(e, customer) {
-                vm.customerId = customer.id;
+                    name: 'customers',
+                    display: 'name',
+                    source: customers
+                })
+                .on("typeahead:select", function (e, customer) {
+                    vm.customerId = customer.id;
+                });
+
+            var vm = {
+                movieIds: []
+            };
+
+            var movies = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/movies?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#movie').typeahead({
+                minLength: 2,
+                highlight: true
+            }, {
+                    name: 'movies',
+                    display: 'name',
+                    source: movies
+                })
+                .on("typeahead:select", function (e, movie) {
+                    $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+
+                    $("#movie").typeahead("val", "");
+
+                    vm.movieIds.push(movie.id);
+                });
+
+
+            // Get the <datalist> and <input> elements.
+            var customersDataList = document.getElementById('cust-json-datalist');
+            var customerInput = document.getElementById('ajaxGetCustomers');
+
+            // Create a new XMLHttpRequest.
+            var custRequest = new XMLHttpRequest();
+            var allCustomers = {};
+            // Handle state changes for the request.
+            custRequest.onreadystatechange = function (response) {
+                if (custRequest.readyState === 4) {
+                    if (custRequest.status === 200) {
+                        // Parse the JSON
+                        customersDataList.innerHTML = "";
+                        var jsonOptions = JSON.parse(custRequest.responseText);
+                        allCustomers = jsonOptions;
+                        // Loop over the JSON array.
+                        jsonOptions.forEach(function (item) {
+                            // Create a new <option> element.
+                            var option = document.createElement('option');
+                            // Set the value using the item in the JSON array.
+                            option.value = item.name;
+                            // Add the <option> element to the <datalist>.
+                            customersDataList.appendChild(option);
+                        });
+
+                        // Update the placeholder text.
+                        customerInput.placeholder = "Enter Customer Name...";
+                    } else {
+                        // An error occured :(
+                        customerInput.placeholder = "Couldn't load customer names :(";
+                    }
+                }
+            };
+
+            // Update the placeholder text.
+            //customerInput.placeholder = "Loading options...";
+
+            // Set up and make the request.
+            custRequest.open('GET', '/api/customers', true);
+            custRequest.send();
+
+
+            $('#ajaxGetCustomers').on("keyup", function () {
+                if (this.value.length > 0) {
+                    custRequest.open('GET', '/api/customers?query=' + this.value, true);
+                    custRequest.send();
+                }
+            });
+
+            $('#ajaxGetCustomers').on("input", function () {
+                var custId = allCustomers.find(x => x.name === $(this).val());
+                if (custId != undefined)
+                    vm.customerId = custId.id;
+            });
+
+            // Get the <datalist> and <input> elements.
+            var moviesDataList = document.getElementById('movie-json-datalist');
+            var movieInput = document.getElementById('ajaxGetMovies');
+
+            // Create a new XMLHttpRequest.
+            var moviesRequest = new XMLHttpRequest();
+            var allMovies = {};
+            // Handle state changes for the request.
+            moviesRequest.onreadystatechange = function (response) {
+                if (moviesRequest.readyState === 4) {
+                    if (moviesRequest.status === 200) {
+                        // Parse the JSON
+                        moviesDataList.innerHTML = "";
+                        var jsonOptions = JSON.parse(moviesRequest.responseText);
+                        allMovies = jsonOptions;
+                        // Loop over the JSON array.
+                        jsonOptions.forEach(function (item) {
+                            // Create a new <option> element.
+                            var option = document.createElement('option');
+                            // Set the value using the item in the JSON array.
+                            option.value = item.name;
+                            // Add the <option> element to the <datalist>.
+                            moviesDataList.appendChild(option);
+                        });
+
+                        // Update the placeholder text.
+                        movieInput.placeholder = "Enter Movie Name...";
+                    } else {
+                        // An error occured :(
+                        movieInput.placeholder = "Couldn't load movie names :(";
+                    }
+                }
+            };
+
+            // Update the placeholder text.
+            //movieInput.placeholder = "Loading options...";
+
+            // Set up and make the request.
+            moviesRequest.open('GET', '/api/movies', true);
+            moviesRequest.send();
+
+            $('#ajaxGetMovies').on("keyup", function () {
+                if (this.value.length > 0) {
+                    moviesRequest.open('GET', '/api/movies?query=' + this.value, true);
+                    moviesRequest.send();
+                }
+            });
+
+            $('#ajaxGetMovies').on("input", function () {
+                var movie = allMovies.find(x => x.name === $(this).val());
+                if (movie != undefined) {
+                    if (vm.movieIds.indexOf(movie.id) === -1) {
+                        $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+                        vm.movieIds.push(movie.id);
+                    }
+                    movieInput.value = "";
+                    movieInput.placeholder = "Enter Movie Name...";
+                }
+            });
+
+            $("#newRental").submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "/api/newRentals",
+                    method: "post",
+                    data: vm
+                })
+                    .done(function () {
+                        toastr.success("Rentals succesfully recorded.");
+                        customerInput.value = "";
+                        $("#movies").empty();
+                    })
+                    .fail(function () {
+                        toastr.error("Something went wrong");
+                    });
             });
         });
     </script>

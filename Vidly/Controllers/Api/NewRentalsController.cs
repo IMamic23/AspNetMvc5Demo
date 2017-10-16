@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -21,68 +22,85 @@ namespace Vidly.Controllers.Api
         [HttpPost]
         public async Task<IHttpActionResult> CreateNewRentals(NewRentalDto newRental)
         {
-            var customer = await _context.Customers.SingleAsync(c => c.Id == newRental.CustomerId);
-
-            var movies = await _context.Movies.Where(m => newRental.MovieIds.Contains(m.Id)).ToListAsync();
-
-            foreach (var movie in movies)
+            try
             {
-                if (movie.NumberAvailable == 0)
-                    return BadRequest("Movie is not available");
+                var customer = await _context.Customers.SingleAsync(c => c.Id == newRental.CustomerId);
 
-                movie.NumberAvailable--;
+                var movies = await _context.Movies.Where(m => newRental.MovieIds.Contains(m.Id)).ToListAsync();
 
-                var rental = new Rental
+                foreach (var movie in movies)
                 {
-                    Customer = customer,
-                    Movie = movie,
-                    DateRented = DateTime.Now
-                };
+                    if (movie.NumberAvailable == 0)
+                        return BadRequest("Movie is not available");
 
-                _context.Rentals.Add(rental);
+                    movie.NumberAvailable--;
+
+                    var rental = new Rental
+                    {
+                        Customer = customer,
+                        Movie = movie,
+                        DateRented = DateTime.Now
+                    };
+
+                    _context.Rentals.Add(rental);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
             }
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+                throw;
+            }
         }
 
-        [HttpPost]
-        public async Task<IHttpActionResult> CreateNewRentalsDefensiveForPublicApi(NewRentalDto newRental)
-        {
-            if (newRental.MovieIds.Count == 0)
-                return BadRequest("No movie Ids have been given");
+        //[HttpPost]
+        //public async Task<IHttpActionResult> CreateNewRentalsDefensiveForPublicApi(NewRentalDto newRental)
+        //{
+        //    if (newRental.MovieIds.Count == 0)
+        //        return BadRequest("No movie Ids have been given");
 
-            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == newRental.CustomerId);
+        //    var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == newRental.CustomerId);
 
-            if (customer == null)
-                return BadRequest("Customer Id is not valid.");
+        //    if (customer == null)
+        //        return BadRequest("Customer Id is not valid.");
 
-            var movies = await _context.Movies.Where(m => newRental.MovieIds.Contains(m.Id)).ToListAsync();
+        //    var movies = await _context.Movies.Where(m => newRental.MovieIds.Contains(m.Id)).ToListAsync();
 
-            if (movies.Count != newRental.MovieIds.Count)
-                return BadRequest("One or more movie Ids are invalid");
+        //    if (movies.Count != newRental.MovieIds.Count)
+        //        return BadRequest("One or more movie Ids are invalid");
 
-            foreach (var movie in movies)
-            {
-                if (movie.NumberAvailable == 0)
-                    return BadRequest("Movie is not available");
+        //    foreach (var movie in movies)
+        //    {
+        //        if (movie.NumberAvailable == 0)
+        //            return BadRequest("Movie is not available");
 
-                movie.NumberAvailable--;
+        //        movie.NumberAvailable--;
 
-                var rental = new Rental
-                {
-                    Customer = customer,
-                    Movie = movie,
-                    DateRented = DateTime.Now
-                };
+        //        var rental = new Rental
+        //        {
+        //            Customer = customer,
+        //            Movie = movie,
+        //            DateRented = DateTime.Now
+        //        };
 
-                _context.Rentals.Add(rental);
-            }
+        //        _context.Rentals.Add(rental);
+        //    }
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }

@@ -39,3 +39,9 @@ textarea {
 .validation-summary-errors {
     color: red;
 }
+
+datalist > option {
+    cursor: pointer;
+    padding: 3px;
+    border-bottom: 1px rgba(0, 0, 0, 0.2);
+}
