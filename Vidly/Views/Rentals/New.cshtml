@@ -10,13 +10,15 @@
 <form id="newRental">
     <div class="form-group">
         <div class="tt-container">
-            <input id="ajaxGetCustomers" list="cust-json-datalist" autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Customer Name..." />
+            <input id="ajaxGetCustomers" name="customer" required data-rule-validCustomer="true" list="cust-json-datalist" 
+                   autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Customer Name..." />
             <datalist id="cust-json-datalist"></datalist>
         </div>
     </div>
     <div class="form-group">
         <div class="tt-container">
-            <input id="ajaxGetMovies" list="movie-json-datalist" autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Movie Name..." />
+            <input id="ajaxGetMovies" name="movie" data-rule-validMovie="true" list="movie-json-datalist" 
+                   autocomplete="off" type="text" value="" class="form-control" placeholder="Enter Movie Name..." />
             <datalist id="movie-json-datalist"></datalist>
         </div>
     </div>
@@ -34,9 +36,9 @@
 
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
         $(document).ready(function () {
-
 
             var customers = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -204,23 +206,43 @@
                 }
             });
 
-            $("#newRental").submit(function (e) {
-                e.preventDefault();
 
-                $.ajax({
-                    url: "/api/newRentals",
-                    method: "post",
-                    data: vm
-                })
-                    .done(function () {
-                        toastr.success("Rentals succesfully recorded.");
-                        customerInput.value = "";
-                        $("#movies").empty();
-                    })
-                    .fail(function () {
-                        toastr.error("Something went wrong");
-                    });
+            $.validator.addMethod("validCustomer",
+                function() {
+                    return vm.customerId && vm.customerId !== 0;
+                }, "Please select a valid customer.");
+
+            $.validator.addMethod("validMovie",
+                function () {
+                    return vm.movieIds.length > 0;
+                }, "Please select at least one movie.");
+
+            var validator = $("#newRental").validate({
+                submitHandled: function() {
+                    $.ajax({
+                            url: "/api/newRentals",
+                            method: "post",
+                            data: vm
+                        })
+                        .done(function() {
+                            toastr.success("Rentals succesfully recorded.");
+
+                            customerInput.value = "";
+                            movieInput.value = "";
+                            $("#movies").empty();
+
+                            vm = { movieIds: [] };
+
+                            validator.resetForm();
+                        })
+                        .fail(function() {
+                            toastr.error("Something went wrong");
+                        });
+
+                    return false;
+                }
             });
+
         });
     </script>
 }

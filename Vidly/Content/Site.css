@@ -28,15 +28,15 @@ textarea {
     font-size: 55px;
 }
 
-.field-validation-error {
-    color: red;
+.field-validation-error, label.error {
+    color: red !important;
 }
 
-.input-validation-error {
-    border: 2px solid red;
+.input-validation-error, input.error {
+    border: 2px solid red !important;
 }
 
-.validation-summary-errors {
+.validation-summary-errors  {
     color: red;
 }
 
@@ -44,4 +44,8 @@ datalist > option {
     cursor: pointer;
     padding: 3px;
     border-bottom: 1px rgba(0, 0, 0, 0.2);
+}
+
+ {
+    color: red;
 }
