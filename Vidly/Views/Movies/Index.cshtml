@@ -39,7 +39,12 @@
                 {
                     data: "releaseDate",
                     render: function (data) {
-                        return new Date(data).toLocaleDateString("EN-GB");
+                        return new Date(data).toLocaleDateString("en-GB",
+                            {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            });
                     }
                 },
                 {

@@ -4,19 +4,57 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Vidly.Models;
 using Vidly.Models.ModelDto;
 
 namespace Vidly.Controllers.Api
 {
-    public class NewRentalsController : ApiController
+    public class RentalsController : ApiController
     {
         private readonly ApplicationDbContext _context;
-        public NewRentalsController()
+        public RentalsController()
         {
             _context = new ApplicationDbContext();
+        }
+
+        // GET /api/rentals
+        [HttpGet]
+        public IEnumerable<Rental> GetRentals(string query = null)
+        {
+            var rentalsQuery = _context.Rentals
+                .Include(c => c.Customer)
+                .Include(m => m.Movie);
+
+            if (!String.IsNullOrWhiteSpace(query))
+                rentalsQuery = rentalsQuery.Where(c => c.Customer.Name.Contains(query));
+
+            return rentalsQuery
+                .ToList();
+        }
+
+        // PUT /api/rentals/1
+        [HttpPut]
+        public async Task<IHttpActionResult> UpdateRental(int id)
+        {
+            try
+            {
+                var rentalInDb = await _context.Rentals.Where(c => c.Id == id).Include(c => c.Customer).Include(m => m.Movie).SingleOrDefaultAsync();
+
+                if (rentalInDb == null)
+                    return NotFound();
+
+                rentalInDb.DateReturned = DateTime.Now;
+                rentalInDb.Movie.NumberAvailable++;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(rentalInDb);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]

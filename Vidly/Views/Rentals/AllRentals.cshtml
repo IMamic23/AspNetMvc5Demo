@@ -1,0 +1,122 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "All Rentals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>All Rentals</h2>
+
+<table id="rentals" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Movie</th>
+            <th>Date Rented</th>
+            <th>Date Returned</th>
+            <th>Return Movie</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        var request = $.ajax({
+            url: "/api/rentals",
+            type: "GET"
+        });
+
+        request.done(function (r) {
+            console.log(r);
+        });
+
+        $(document).ready(function () {
+            var isDisabled = "";
+
+            var table = $("#rentals").DataTable({
+                ajax: {
+                    url: "/api/rentals",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "customer.name"
+                    },
+                    {
+                        data: "movie.name"
+                    },
+                    {
+                        data: "dateRented",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString("en-GB",
+                                {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric"
+                                });
+                        }
+                    },
+                    {
+                        data: "dateReturned",
+                        render: function (data) {
+                            if (data !== null){
+                                isDisabled = "disabled";
+                                return new Date(data).toLocaleDateString("en-GB",
+                                    {
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric"
+                                    });
+                            }
+
+                            isDisabled = "";
+                            return "";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-return' " + isDisabled + " data-rental-id=" + data + ">Return</button>";
+                        }
+                    }
+                ]
+            });
+
+            $("#rentals").on("click", ".js-return",
+                function () {
+                    var button = $(this);
+
+                    bootbox.confirm({
+                        title: "Return a movie?",
+                        message: "Are you shure you want to return this movie?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-success'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-primary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    url: "/api/rentals/" + button.attr("data-rental-id"),
+                                    method: "PUT",
+                                    dataType: 'json',
+                                    success: function () {
+                                        toastr.success("Movie is successfully returned");
+
+                                        table.ajax.reload();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+        });
+    </script>
+}

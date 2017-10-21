@@ -37,6 +37,7 @@
 @section scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+
     <script>
         $(document).ready(function () {
 
@@ -218,9 +219,9 @@
                 }, "Please select at least one movie.");
 
             var validator = $("#newRental").validate({
-                submitHandled: function() {
+                submitHandler: function() {
                     $.ajax({
-                            url: "/api/newRentals",
+                            url: "/api/rentals",
                             method: "post",
                             data: vm
                         })
@@ -238,7 +239,6 @@
                         .fail(function() {
                             toastr.error("Something went wrong");
                         });
-
                     return false;
                 }
             });

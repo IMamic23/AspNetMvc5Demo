@@ -8,18 +8,20 @@ namespace Vidly
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/lib").Include(
+            bundles.Add(new Bundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/popper.js",
+                        "~/Scripts/datatables/jquery.datatables.js", 
+                        "~/Scripts/datatables/datatables.bootstrap.js"));
+
+            bundles.Add(new Bundle("~/bundles/lib").Include(
+                        "~/Scripts/umd/popper.js",
                         "~/Scripts/bootbox.js",
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/respond.js",
                         "~/Scripts/toastr.js",
                         "~/Scripts/bootstrap-datepicker.js",
                         "~/Scripts/DatePickerReady.js",
-                        "~/scripts/datatables/jquery.datatables.js",
-                        "~/scripts/datatables/datatables.bootstrap.js",
-                        "~/scripts/typeahead.bundle.js"
+                        "~/Scripts/typeahead.bundle.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -30,7 +32,7 @@ namespace Vidly
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+            bundles.Add(new StyleBundle("~/Content/styles").Include(
                       "~/Content/bootstrap-lumen.css",
                       "~/Content/typeahead.css",
                       "~/Content/toastr.css",

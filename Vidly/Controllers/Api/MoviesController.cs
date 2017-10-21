@@ -58,6 +58,7 @@ namespace Vidly.Controllers.Api
             var movie = AutoMapper.Mapper.Map<Movie>(movieDto);
             movie.LastUpdateDate = DateTime.Now;
             movie.DateAdded = DateTime.Now;
+            movie.NumberAvailable = movieDto.InStock;
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();

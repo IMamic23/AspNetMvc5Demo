@@ -46,6 +46,7 @@ datalist > option {
     border-bottom: 1px rgba(0, 0, 0, 0.2);
 }
 
- {
-    color: red;
+button[disabled] {
+    color: gray !important;
+    opacity: 0.4 !important;
 }

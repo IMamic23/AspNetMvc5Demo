@@ -14,11 +14,11 @@
         @Html.ValidationMessageFor(m => m.Name)
     </div>
     <div class="form-group">
-        @Html.TextBoxFor(m => m.ReleaseDate, "{0:MM/dd/yyyy}", new { @class = "form-control", id="datecontrol", placeholder = @Html.DisplayNameFor(m => m.ReleaseDate) })
+        @Html.TextBoxFor(m => m.ReleaseDate, "{0:dd MMMM yyyy}", new { @class = "form-control", id="datecontrol", placeholder = @Html.DisplayNameFor(m => m.ReleaseDate) })
         @Html.ValidationMessageFor(m => m.ReleaseDate)
     </div>
     <div class="form-group">
-        @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.Genres, "Id", "Name"), "Select Genre", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.Genres.OrderBy(a => a.Name), "Id", "Name"), "Select Genre", new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Genres)
     </div>
     <div class="form-group">
@@ -35,6 +35,8 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        $('#datecontrol').datepicker();
+        $('#datecontrol').datepicker({
+            format: 'dd MM yyyy'
+        });
     </script>
 }
